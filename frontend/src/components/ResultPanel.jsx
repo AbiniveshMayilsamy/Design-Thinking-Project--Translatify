@@ -44,7 +44,7 @@ export default function ResultPanel({ original, translated, detectedLang, audioU
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
             style={{ marginTop: 14, overflow: 'hidden' }}>
             <div style={{ fontSize: '0.68rem', color: G, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 8 }}>Translated Audio</div>
-            <audio controls src={`http://localhost:5000${audioUrl}`} style={{ width: '100%', borderRadius: 8 }} />
+            <audio controls src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${audioUrl}`} style={{ width: '100%', borderRadius: 8 }} />
           </motion.div>
         )}
       </AnimatePresence>

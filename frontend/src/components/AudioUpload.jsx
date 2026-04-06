@@ -25,13 +25,15 @@ export default function AudioUpload({ langs }) {
     progRef.current = setInterval(() => { p = Math.min(p + Math.random() * 7, 88); setProgress(p); if (p >= 88) clearInterval(progRef.current) }, 300)
   }
 
+  const API = import.meta.env.VITE_API_URL || ''
+
   const translate = async () => {
     if (!file) return
     setLoading(true); setResult(null); animProg()
     const fd = new FormData()
     fd.append('file', file); fd.append('src_lang', srcLang); fd.append('tgt_lang', tgtLang)
     try {
-      const res = await fetch('/api/translate-audio', { method: 'POST', body: fd, headers: { Authorization: `Bearer ${token}` } })
+      const res = await fetch(`${API}/api/translate-audio`, { method: 'POST', body: fd, headers: { Authorization: `Bearer ${token}` } })
       const data = await res.json()
       clearInterval(progRef.current); setProgress(100)
       if (data.error) { setError(data.error); toast(data.error, 'error'); return }

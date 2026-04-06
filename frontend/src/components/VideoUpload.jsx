@@ -28,13 +28,15 @@ export default function VideoUpload({ langs }) {
     progRef.current = setInterval(() => { p = Math.min(p + Math.random() * 5, 88); setProgress(p); if (p >= 88) clearInterval(progRef.current) }, 400)
   }
 
+  const API = import.meta.env.VITE_API_URL || ''
+
   const translate = async () => {
     if (!file) return
     setLoading(true); setResult(null); animProg()
     const fd = new FormData()
     fd.append('file', file); fd.append('src_lang', srcLang); fd.append('tgt_lang', tgtLang)
     try {
-      const res = await fetch('/api/translate-video', { method: 'POST', body: fd, headers: { Authorization: `Bearer ${token}` } })
+      const res = await fetch(`${API}/api/translate-video`, { method: 'POST', body: fd, headers: { Authorization: `Bearer ${token}` } })
       clearInterval(progRef.current); setProgress(100)
       const ct = res.headers.get('content-type') || ''
       if (!ct.includes('application/json')) {

@@ -40,7 +40,7 @@ function AppInner() {
   }, [])
 
   useEffect(() => {
-    fetch('/api/languages').then(r => r.json()).then(setLangs).catch(() => {})
+    fetch(`${import.meta.env.VITE_API_URL || ''}/api/languages`).then(r => r.json()).then(setLangs).catch(() => {})
   }, [])
 
   const handleNav = (id) => {
