@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useCallback } from 'react'
 
 const AuthContext = createContext(null)
-const API = import.meta.env.VITE_API_URL || ''
 
 async function safeJson(res) {
   const ct = res.headers.get('content-type') || ''
@@ -20,7 +19,7 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (email, password) => {
     let res
     try {
-      res = await fetch(`${API}/api/auth/login`, {
+      res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -40,7 +39,7 @@ export function AuthProvider({ children }) {
   const register = useCallback(async (name, email, password) => {
     let res
     try {
-      res = await fetch(`${API}/api/auth/register`, {
+      res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),

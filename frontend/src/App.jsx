@@ -40,7 +40,7 @@ function AppInner() {
   }, [])
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL || ''}/api/languages`).then(r => r.json()).then(setLangs).catch(() => {})
+    fetch('/api/languages').then(r => r.json()).then(setLangs).catch(() => {})
   }, [])
 
   const handleNav = (id) => {
@@ -67,10 +67,8 @@ function AppInner() {
     <ToastProvider>
       {/* Video background */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden' }}>
-        {typeof window !== 'undefined' && (
-          <video autoPlay loop muted playsInline src={videoBg}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        )}
+        <video autoPlay loop muted playsInline src={videoBg}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.85)' }} />
       </div>
 
