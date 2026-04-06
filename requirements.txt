@@ -1,0 +1,11 @@
+flask
+flask-socketio
+openai-whisper
+transformers
+sentencepiece
+gTTS
+moviepy
+torch
+torchaudio
+numpy
+eventlet
