@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useAuth } from '../AuthContext'
 
 const G = '#b5f23d'
 
@@ -35,6 +36,8 @@ function Reveal({ children, type = 'reveal', delay = 0, style = {} }) {
 }
 
 export default function HomePage({ onStart }) {
+  const { user, isLoggedIn } = useAuth()
+  const isAdmin = user?.role === 'admin'
   return (
     <div style={{ minHeight: '100vh' }}>
 
@@ -76,10 +79,27 @@ export default function HomePage({ onStart }) {
 
         <Reveal delay={0.22}>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 64 }}>
-            <button className="btn btn-green" onClick={() => onStart('admin')}
-              style={{ padding: '14px 32px', fontSize: '0.95rem' }}>
-              Visit Dashboard
-            </button>
+            {isAdmin ? (
+              <button className="btn btn-green" onClick={() => onStart('admin')}
+                style={{ padding: '14px 32px', fontSize: '0.95rem' }}>
+                Visit Dashboard
+              </button>
+            ) : (
+              <>
+                <button className="btn btn-green" onClick={() => onStart('voice')}
+                  style={{ padding: '14px 32px', fontSize: '0.95rem' }}>
+                  Start Recording
+                </button>
+                <button className="btn btn-outline" onClick={() => onStart('video')}
+                  style={{ padding: '14px 32px', fontSize: '0.95rem' }}>
+                  Translate Video
+                </button>
+                <button className="btn btn-ghost" onClick={() => onStart('audio')}
+                  style={{ padding: '14px 32px', fontSize: '0.95rem' }}>
+                  Upload Audio
+                </button>
+              </>
+            )}
           </div>
         </Reveal>
 
@@ -145,11 +165,11 @@ export default function HomePage({ onStart }) {
               <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 900, color: '#fff', letterSpacing: '-1px', marginBottom: 10 }}>
                 Ready to translate?
               </h2>
-              <p style={{ color: '#666', fontSize: '0.95rem' }}>Access the admin dashboard to manage users and view translations.</p>
+              <p style={{ color: '#666', fontSize: '0.95rem' }}>{isAdmin ? 'Access the admin dashboard to manage users and view translations.' : 'Start with voice recording or upload your media files.'}</p>
             </div>
-            <button className="btn btn-green" onClick={() => onStart('admin')}
+            <button className="btn btn-green" onClick={() => onStart(isAdmin ? 'admin' : 'voice')}
               style={{ padding: '16px 40px', fontSize: '1rem', flexShrink: 0 }}>
-              Visit Dashboard
+              {isAdmin ? 'Visit Dashboard' : 'Get Started Now'}
             </button>
           </div>
         </Reveal>

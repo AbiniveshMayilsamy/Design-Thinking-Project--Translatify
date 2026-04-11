@@ -115,7 +115,7 @@ export default function AdminPage() {
       )}
 
       <div style={{ display: 'flex', gap: 2, marginBottom: 24 }}>
-        {['users'].map(t => (
+        {['users', 'history'].map(t => (
           <button key={t} onClick={() => setActiveTab(t)}
             style={{
               padding: '9px 22px', border: 'none', borderRadius: 6,
@@ -124,7 +124,7 @@ export default function AdminPage() {
               fontFamily: 'inherit', fontSize: '0.85rem',
               fontWeight: 700, cursor: 'pointer',
             }}>
-            Users
+            {t === 'users' ? 'Users' : 'Translation History'}
           </button>
         ))}
       </div>
