@@ -26,7 +26,13 @@ function Reveal({ children, type = 'reveal', delay = 0, style = {} }) {
     if (!el) return
     el.style.transitionDelay = `${delay}s`
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { el.classList.add('visible'); observer.disconnect() } },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('visible')
+        } else {
+          el.classList.remove('visible')
+        }
+      },
       { threshold: 0.1 }
     )
     observer.observe(el)
