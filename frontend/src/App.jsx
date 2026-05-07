@@ -11,6 +11,9 @@ import VoiceRecorder from './components/VoiceRecorder'
 import AudioUpload from './components/AudioUpload'
 import VideoUpload from './components/VideoUpload'
 import Footer from './components/Footer'
+import StarfieldBackground from './components/StarfieldBackground'
+import PageBackground from './components/PageBackground'
+import CursorEffect from './components/CursorEffect'
 import { ToastProvider } from './ToastContext'
 import { AuthProvider, useAuth } from './AuthContext'
 import videoBg from './assets/translation.mp4'
@@ -31,6 +34,7 @@ function AppInner() {
   const [connected, setConnected] = useState(false)
   const [status, setStatus]   = useState('Connecting...')
   const [langs, setLangs]     = useState({})
+  const [use3D, setUse3D]     = useState(true)
 
   useEffect(() => {
     socket.on('connect',    () => { setConnected(true);  setStatus('Connected') })
@@ -65,11 +69,36 @@ function AppInner() {
 
   return (
     <ToastProvider>
-      {/* Video background */}
-      <div style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden' }}>
-        <video autoPlay loop muted playsInline src={videoBg}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.85)' }} />
+      <CursorEffect />
+
+      {/* Background — Globe for home, particles for other pages */}
+      {use3D ? (
+        page === 'home' ? <StarfieldBackground /> : <PageBackground />
+      ) : (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden' }}>
+          <video autoPlay loop muted playsInline src={videoBg}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.88)' }} />
+        </div>
+      )}
+
+      {/* Toggle */}
+      <div style={{ position: 'fixed', bottom: 24, left: 24, zIndex: 1000, display: 'flex', alignItems: 'center', gap: 10 }}>
+        <span style={{ fontSize: '0.68rem', color: '#444', fontWeight: 600 }}>Video</span>
+        <div onClick={() => setUse3D(v => !v)} style={{
+          width: 40, height: 22, borderRadius: 11, cursor: 'pointer',
+          background: use3D ? '#b5f23d' : 'rgba(255,255,255,0.08)',
+          position: 'relative', transition: 'background 0.3s',
+          border: '1px solid rgba(255,255,255,0.12)',
+        }}>
+          <div style={{
+            position: 'absolute', top: 3, left: use3D ? 20 : 3,
+            width: 14, height: 14, borderRadius: '50%',
+            background: use3D ? '#000' : '#444',
+            transition: 'left 0.3s',
+          }} />
+        </div>
+        <span style={{ fontSize: '0.68rem', color: '#444', fontWeight: 600 }}>3D</span>
       </div>
 
       {/* Content */}
@@ -80,40 +109,50 @@ function AppInner() {
 
           {page === 'home' && (
             <motion.div key="home"
-              initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -60 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
+              initial={{ opacity: 0, scale: 0.96, filter: 'blur(12px)' }}
+              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, scale: 1.04, filter: 'blur(12px)' }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}>
               <HomePage onStart={handleNav} />
             </motion.div>
           )}
 
           {page === 'about' && (
             <motion.div key="about"
-              initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -60 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
+              initial={{ opacity: 0, x: 60, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, x: -60, filter: 'blur(8px)' }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}>
               <AboutPage />
             </motion.div>
           )}
 
           {page === 'login' && (
             <motion.div key="login"
-              initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -60 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
+              initial={{ opacity: 0, y: 40, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -40, scale: 0.97 }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}>
               <LoginPage onSuccess={(role) => setPage(role === 'admin' ? 'home' : 'translate')} />
             </motion.div>
           )}
 
           {page === 'admin' && isLoggedIn && user?.role === 'admin' && (
             <motion.div key="admin"
-              initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -60 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
+              initial={{ opacity: 0, x: -60, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, x: 60, filter: 'blur(8px)' }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}>
               <AdminPage />
             </motion.div>
           )}
 
           {page === 'translate' && isLoggedIn && (
             <motion.div key="translate"
-              initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -60 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
+              initial={{ opacity: 0, y: 50, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -50, scale: 0.97 }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}>
               <main style={{ maxWidth: 860, margin: '0 auto', padding: '40px 24px 80px' }}>
                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: 28 }}>
                   <div style={{ fontSize: '0.68rem', color: '#b5f23d', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', marginBottom: 8 }}>
@@ -135,11 +174,12 @@ function AppInner() {
             </motion.div>
           )}
 
-          {/* Redirect to login if not authenticated */}
           {page === 'translate' && !isLoggedIn && (
             <motion.div key="login-redirect"
-              initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -60 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
+              initial={{ opacity: 0, y: 40, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -40, scale: 0.97 }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}>
               <LoginPage onSuccess={(role) => setPage(role === 'admin' ? 'admin' : 'translate')} />
             </motion.div>
           )}

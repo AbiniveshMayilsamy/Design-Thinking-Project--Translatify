@@ -2,6 +2,8 @@
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+body, a, button, [role="button"], input, select, textarea { cursor: none !important; }
+
 :root {
   --green:   #b5f23d;   /* banana leaf lemon green — primary accent */
   --green2:  #d4ff6a;   /* lighter highlight */
