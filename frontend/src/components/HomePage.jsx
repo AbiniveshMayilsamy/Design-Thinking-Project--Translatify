@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useAuth } from '../AuthContext'
 
 const G = '#b5f23d'
 
@@ -25,7 +26,13 @@ function Reveal({ children, type = 'reveal', delay = 0, style = {} }) {
     if (!el) return
     el.style.transitionDelay = `${delay}s`
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { el.classList.add('visible'); observer.disconnect() } },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('visible')
+        } else {
+          el.classList.remove('visible')
+        }
+      },
       { threshold: 0.1 }
     )
     observer.observe(el)
@@ -35,11 +42,13 @@ function Reveal({ children, type = 'reveal', delay = 0, style = {} }) {
 }
 
 export default function HomePage({ onStart }) {
+  const { user, isLoggedIn } = useAuth()
+  const isAdmin = user?.role === 'admin'
   return (
     <div style={{ minHeight: '100vh' }}>
 
       {/* Hero */}
-      <div style={{ padding: 'clamp(40px, 8vw, 90px) clamp(20px, 5vw, 64px) 72px', maxWidth: 1200 }}>
+      <div style={{ padding: '90px 64px 72px', maxWidth: 1200 }}>
 
         <Reveal delay={0}>
           <span style={{
@@ -76,10 +85,27 @@ export default function HomePage({ onStart }) {
 
         <Reveal delay={0.22}>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 64 }}>
-            <button className="btn btn-green" onClick={() => onStart('admin')}
-              style={{ padding: '14px 32px', fontSize: '0.95rem' }}>
-              Visit Dashboard
-            </button>
+            {isAdmin ? (
+              <button className="btn btn-green" onClick={() => onStart('admin')}
+                style={{ padding: '14px 32px', fontSize: '0.95rem' }}>
+                Visit Dashboard
+              </button>
+            ) : (
+              <>
+                <button className="btn btn-green" onClick={() => onStart('voice')}
+                  style={{ padding: '14px 32px', fontSize: '0.95rem' }}>
+                  Start Recording
+                </button>
+                <button className="btn btn-outline" onClick={() => onStart('video')}
+                  style={{ padding: '14px 32px', fontSize: '0.95rem' }}>
+                  Translate Video
+                </button>
+                <button className="btn btn-ghost" onClick={() => onStart('audio')}
+                  style={{ padding: '14px 32px', fontSize: '0.95rem' }}>
+                  Upload Audio
+                </button>
+              </>
+            )}
           </div>
         </Reveal>
 
@@ -98,7 +124,7 @@ export default function HomePage({ onStart }) {
 
       {/* Stats row */}
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', maxWidth: 1200, padding: '0 clamp(20px, 5vw, 64px)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', maxWidth: 1200, padding: '0 64px' }}>
           {STATS.map((s, i) => (
             <Reveal key={s.label} delay={i * 0.1} style={{
               padding: '32px 24px',
@@ -112,7 +138,7 @@ export default function HomePage({ onStart }) {
       </div>
 
       {/* Features */}
-      <div style={{ padding: 'clamp(40px, 6vw, 80px) clamp(20px, 5vw, 64px)', maxWidth: 1200 }}>
+      <div style={{ padding: '80px 64px', maxWidth: 1200 }}>
         <Reveal delay={0}>
           <div style={{ marginBottom: 48 }}>
             <div style={{ fontSize: '0.72rem', color: G, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 12 }}>CAPABILITIES</div>
@@ -122,7 +148,7 @@ export default function HomePage({ onStart }) {
           </div>
         </Reveal>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 1, background: 'rgba(255,255,255,0.04)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 1, background: 'rgba(255,255,255,0.04)' }}>
           {FEATURES.map((f, i) => (
             <Reveal key={f.title} delay={i * 0.08} type={i % 2 === 0 ? 'reveal' : 'reveal-scale'}>
               <div className="feature-card" style={{ background: 'rgba(0,0,0,0.45)', borderRadius: 0, padding: '36px 32px', cursor: 'default' }}>
@@ -137,7 +163,7 @@ export default function HomePage({ onStart }) {
       </div>
 
       {/* CTA */}
-      <div style={{ padding: '0 clamp(20px, 5vw, 64px) 100px', maxWidth: 1200 }}>
+      <div style={{ padding: '0 64px 100px', maxWidth: 1200 }}>
         <Reveal type="reveal-scale">
           <div style={{ background: 'rgba(0,0,0,0.55)', borderRadius: 16, padding: '56px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap', borderLeft: `3px solid ${G}` }}>
             <div>
@@ -145,11 +171,11 @@ export default function HomePage({ onStart }) {
               <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 900, color: '#fff', letterSpacing: '-1px', marginBottom: 10 }}>
                 Ready to translate?
               </h2>
-              <p style={{ color: '#666', fontSize: '0.95rem' }}>Access the admin dashboard to manage users and view translations.</p>
+              <p style={{ color: '#666', fontSize: '0.95rem' }}>{isAdmin ? 'Access the admin dashboard to manage users and view translations.' : 'Start with voice recording or upload your media files.'}</p>
             </div>
-            <button className="btn btn-green" onClick={() => onStart('admin')}
+            <button className="btn btn-green" onClick={() => onStart(isAdmin ? 'admin' : 'voice')}
               style={{ padding: '16px 40px', fontSize: '1rem', flexShrink: 0 }}>
-              Visit Dashboard
+              {isAdmin ? 'Visit Dashboard' : 'Get Started Now'}
             </button>
           </div>
         </Reveal>
